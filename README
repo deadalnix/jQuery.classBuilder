@@ -1,0 +1,85 @@
+Plugin presentation
+
+This plugin allow the user to use object oriented programmation in javascript like inheritance and polymorphism.
+
+The plugin usage is really simple. use the function $.classBuilder to create your classes, and then use them to instanciate objects.
+
+$.classBuilder as one parameter and one optionnal parameter. The first one is a class definition object, the second one a super class, if revelant, for inheritance.
+
+The class definition object contains all methods we can apply on the object and static fields as object properties. The special propertie constructor is reserved for the class constructor. See the exemple below :
+var classDef = {
+    constructor : function(){ alert('class constructor'); },
+    method : function(){ alert('I am a method'); },
+    staticField : 3,
+};
+
+The superclass is simply another class defined by $.classBuilder . If specified, our class will inhertir from the superclass.
+
+Objects have a special property called uber (as suggested by Douglas Crockford and popularized by Stoyan Stefanov in Object Oriented Javascript). This property is used for polymorphism.
+Usage exemple
+var A = $.buildClass({
+constructor: function(){ document.write('Construct A . . .<br />'); },
+foo : function(){ this.txt = 'bar_a'; },
+fiz : function(){ this.txt = 'buz'; },
+});
+
+var a = new A();
+
+var B = $.buildClass({
+constructor: function(){ this.uber.constructor(); document.write('Construct B . . .<br />'); },
+foo : function(){ this.txt = 'bar_b'; },
+baz : function(){ this.txt = 'baz'; },
+}, A);
+
+var b = new B();
+
+b.baz();
+document.write(b.txt + '<br />');
+b.foo();
+document.write(b.txt + '<br />');
+b.fiz();
+document.write(b.txt + '<br />');
+b.uber.foo();
+document.write(b.txt + '<br />');
+
+var C = $.buildClass({
+constructor: function(){ document.write('Construct C . . .<br />'); },
+foo : function(){ this.txt = 'bar_c'; },
+pop : function(){ this.txt = 'pop'; },
+}, B);
+
+var c = new C();
+
+c.pop();
+document.write(c.txt + '<br />');
+c.foo();
+document.write(c.txt + '<br />');
+c.baz();
+document.write(c.txt + '<br />');
+c.uber.foo();
+document.write(c.txt + '<br />');
+c.fiz();
+document.write(c.txt + '<br />');
+c.uber.uber.foo();
+document.write(c.txt + '<br />');
+
+This code write :
+Construct A . . .
+Construct A . . .
+Construct B . . .
+baz
+bar_b
+buz
+bar_a
+Construct C . . .
+pop
+bar_c
+baz
+bar_b
+buz
+bar_a
+Good Practice
+
+Even if uber is quite powerful, be sure to not use it to modify directly properties of you object. This will not work.
+
+I highly recommand to use acessors to manipulate data from objects.
